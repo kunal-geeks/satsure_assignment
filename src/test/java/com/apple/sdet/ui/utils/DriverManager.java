@@ -47,20 +47,30 @@ public class DriverManager {
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-popup-blocking");
         options.addArguments("--start-maximized");
+        options.addArguments("--disable-blink-features=AutomationControlled");
         
         // Headless mode if configured
         if (ConfigReader.isHeadless()) {
+            logger.info("Initializing Chrome in HEADLESS mode");
             options.addArguments("--headless");
             options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1920,1080");
+        } else {
+            logger.info("Initializing Chrome in HEADED mode");
         }
         
         // Language configuration
         options.addArguments("--lang=en");
         
+        // Disable logging to reduce output
+        options.addArguments("--disable-logging");
+        options.addArguments("--disable-dev-shm-usage");
+        
         WebDriver chromeDriver = new ChromeDriver(options);
         chromeDriver.manage().window().maximize();
         
-        logger.info("Chrome WebDriver initialized successfully");
+        logger.info("Chrome WebDriver initialized successfully in {} mode", 
+            ConfigReader.isHeadless() ? "HEADLESS" : "HEADED");
         return chromeDriver;
     }
 
@@ -81,18 +91,28 @@ public class DriverManager {
 
     /**
      * Close and remove WebDriver instance for current thread.
+     * Ensures proper cleanup of browser process and resources.
      */
     public static void quitDriver() {
         WebDriver currentDriver = driver.get();
         if (currentDriver != null) {
             try {
+                // Close all windows
                 currentDriver.quit();
-                logger.info("WebDriver instance closed successfully");
+                logger.info("WebDriver instance closed successfully and all browser processes terminated");
             } catch (Exception e) {
-                logger.warn("Error while quitting WebDriver", e);
+                logger.warn("Error while quitting WebDriver, attempting to force close", e);
+                try {
+                    currentDriver.quit();
+                } catch (Exception ex) {
+                    logger.error("Failed to quit WebDriver", ex);
+                }
             } finally {
                 driver.remove();
+                logger.debug("Removed WebDriver from ThreadLocal storage");
             }
+        } else {
+            logger.debug("No WebDriver instance to quit");
         }
     }
 }
