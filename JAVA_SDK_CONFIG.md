@@ -2,7 +2,8 @@
 
 ## Current System Configuration
 
-**Installed Java Version**: `OpenJDK 22.0.1` (build 22.0.1+8-16)
+**Installed Java Version**: `OpenJDK 22.0.1` (build 22.0.1+8-16)  
+**Installation Path**: `/Library/Java/JavaVirtualMachines/jdk-22.0.1.jdk/Contents/Home`
 
 ```
 openjdk version "22.0.1" 2024-04-16
@@ -28,14 +29,14 @@ java=22.0.1
 ```
 
 ### 3. **.vscode/settings.json** (VS Code IDE Configuration)
-✅ Configured for VS Code to automatically use Java 22:
+✅ Configured with correct absolute Java 22 path:
 ```json
 {
-  "java.jdt.ls.java.home": "/usr/libexec/java_home -v 22",
+  "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/jdk-22.0.1.jdk/Contents/Home",
   "java.configuration.runtimes": [
     {
       "name": "JavaSE-22",
-      "path": "/usr/libexec/java_home -v 22",
+      "path": "/Library/Java/JavaVirtualMachines/jdk-22.0.1.jdk/Contents/Home",
       "default": true
     }
   ]
