@@ -19,11 +19,10 @@ public class ConfigReader {
         try {
             String environment = System.getProperty("environment", "test");
             String configFile = String.format("config-%s.properties", environment);
-            
+
             properties.load(
-                ConfigReader.class.getClassLoader()
-                    .getResourceAsStream(configFile)
-            );
+                    ConfigReader.class.getClassLoader()
+                            .getResourceAsStream(configFile));
             logger.info("Configuration loaded from: {}", configFile);
         } catch (IOException | NullPointerException e) {
             logger.warn("Config file not found, using defaults", e);

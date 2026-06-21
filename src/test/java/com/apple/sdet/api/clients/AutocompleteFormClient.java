@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AutocompleteFormClient {
     private static final Logger logger = LoggerFactory.getLogger(AutocompleteFormClient.class);
-    
+
     private final String baseUrl;
     private static final String FORM_RESPONSE_ENDPOINT = "/api/form-response";
 
@@ -34,16 +34,16 @@ public class AutocompleteFormClient {
     public Response submitFormResponse(String requestBody) {
         logger.info("Submitting form response");
         Response response = RestAssured
-            .given()
+                .given()
                 .header("Content-Type", "application/json")
-            .when()
+                .when()
                 .body(requestBody)
                 .post(FORM_RESPONSE_ENDPOINT)
-            .then()
+                .then()
                 .log().all()
                 .extract()
                 .response();
-        
+
         logger.info("Form submission response status: {}", response.getStatusCode());
         return response;
     }
@@ -57,16 +57,16 @@ public class AutocompleteFormClient {
     public Response getFormResponse(String formId) {
         logger.info("Retrieving form response for formId: {}", formId);
         Response response = RestAssured
-            .given()
+                .given()
                 .header("Content-Type", "application/json")
                 .queryParam("form_id", formId)
-            .when()
+                .when()
                 .get(FORM_RESPONSE_ENDPOINT)
-            .then()
+                .then()
                 .log().all()
                 .extract()
                 .response();
-        
+
         logger.info("Form retrieval response status: {}", response.getStatusCode());
         return response;
     }
@@ -74,24 +74,24 @@ public class AutocompleteFormClient {
     /**
      * Retrieve all form responses (paginated).
      *
-     * @param page Page number
+     * @param page  Page number
      * @param limit Results per page
      * @return Response object
      */
     public Response getAllFormResponses(int page, int limit) {
         logger.info("Retrieving form responses - page: {}, limit: {}", page, limit);
         Response response = RestAssured
-            .given()
+                .given()
                 .header("Content-Type", "application/json")
                 .queryParam("page", page)
                 .queryParam("limit", limit)
-            .when()
+                .when()
                 .get(FORM_RESPONSE_ENDPOINT)
-            .then()
+                .then()
                 .log().all()
                 .extract()
                 .response();
-        
+
         logger.info("Form list retrieval response status: {}", response.getStatusCode());
         return response;
     }
@@ -105,15 +105,15 @@ public class AutocompleteFormClient {
     public Response deleteFormResponse(String formId) {
         logger.info("Deleting form response for formId: {}", formId);
         Response response = RestAssured
-            .given()
+                .given()
                 .header("Content-Type", "application/json")
-            .when()
+                .when()
                 .delete(FORM_RESPONSE_ENDPOINT + "/" + formId)
-            .then()
+                .then()
                 .log().all()
                 .extract()
                 .response();
-        
+
         logger.info("Form deletion response status: {}", response.getStatusCode());
         return response;
     }
