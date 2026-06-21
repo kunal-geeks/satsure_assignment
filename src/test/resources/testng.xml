@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-current.dtd">
+<suite name="Autocomplete Form Test Suite" thread-count="3" parallel="methods">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <test name="UI Tests" enabled="true">
+        <groups>
+            <run>
+                <include name="ui"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.apple.sdet.ui.tests.AutocompleteFormTest"/>
+        </classes>
+    </test>
+
+    <test name="API Tests" enabled="true">
+        <groups>
+            <run>
+                <include name="api"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.apple.sdet.api.tests.AutocompleteFormAPITest"/>
+        </classes>
+    </test>
+
+    <test name="Critical Tests" enabled="true">
+        <groups>
+            <run>
+                <include name="critical"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.apple.sdet.ui.tests.AutocompleteFormTest"/>
+            <class name="com.apple.sdet.api.tests.AutocompleteFormAPITest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,28 @@
+# Maven
+target/
+.m2repository/
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test Reports
+surefire-reports/
+test-output/
+allure-results/
+
+# Logs
+*.log
+
+# Dependencies
+node_modules/
