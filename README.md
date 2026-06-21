@@ -40,24 +40,31 @@ This repository contains a comprehensive test automation suite for the Autocompl
 │       │           └── validators/
 │       │               └── ResponseValidator.java
 │       └── resources/
-│           ├── config.properties
+│           ├── config-test.properties
 │           └── testng.xml
 ```
+
+## Recent Updates
+
+- Multi-browser support added: Chrome, Firefox, Edge, and Safari (Safari on macOS only)
+- Headless mode enabled by default for CI/CD (configurable)
+- API tests run without any browser initialization (RestAssured + WireMock)
+- Improved WebDriver lifecycle: each UI test gets its own driver (initialized in @BeforeMethod and quit in @AfterMethod)
+- Added comprehensive docs: HEADLESS_MODE.md and BROWSER_LIFECYCLE.md
 
 ## Setup Instructions
 
 ### Prerequisites
 - Java 22.0.1 or compatible version
 - Maven 3.6+
-- Chrome browser (latest version)
-- ChromeDriver (automatically managed by WebDriverManager)
+- One or more browsers installed for UI testing: Chrome, Firefox, Edge, Safari (macOS)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/apple/sdet-assignment.git
-   cd sdet-assignment
+   git clone https://github.com/kunal-geeks/satsure_assignment.git
+   cd satsure_assignment
    ```
 
 2. **Install dependencies**
@@ -66,13 +73,13 @@ This repository contains a comprehensive test automation suite for the Autocompl
    ```
 
 3. **Configure environment**
-   Edit `src/test/resources/config.properties`:
+   Edit `src/test/resources/config-test.properties` (defaults in repo):
    ```properties
    base.url=https://test.com
-   browser=chrome
+   browser=chrome        # chrome | firefox | edge | safari
+   headless=true         # true (CI) or false (local debugging)
    timeout.explicit=10
    timeout.implicit=5
-   headless=false
    ```
 
 ## Running Tests
@@ -97,96 +104,48 @@ mvn clean test -Dgroups=api
 mvn clean test -Dtest=AutocompleteFormTest
 ```
 
-### Run with specific configuration
+### Run with specific configuration (example: Firefox headed)
 ```bash
-mvn clean test -Dheadless=true -Dbrowser=chrome
+mvn clean test -Dheadless=false -Dbrowser=firefox
 ```
 
 ## Test Suite Coverage
 
-### UI Automation Tests
-- ✓ Text Input & Interaction
-- ✓ Tab Navigation
-- ✓ Keyboard Interactions (Enter, Escape)
-- ✓ Suggestion Filtering (Prefix Match)
-- ✓ Suggestion Filtering (Match Anywhere)
-- ✓ Suggestion Selection
-- ✓ Form Submission
-- ✓ Error/Success Message Display
+### UI Automation Tests (8)
+- Text Input & Interaction
+- Tab Navigation
+- Keyboard Interactions (Enter, Escape)
+- Suggestion Filtering (Prefix Match)
+- Suggestion Filtering (Match Anywhere)
+- Suggestion Selection
+- Form Submission
+- Error/Success Message Display
 
-### API Automation Tests
-- ✓ Response Schema Validation
-- ✓ Data Type Validation
-- ✓ Locale Format Validation
-- ✓ Suggestion List Filtering
-- ✓ Negative Test Cases (Missing Fields, Invalid Data)
+### API Automation Tests (10)
+- Response Schema Validation
+- Data Type Validation
+- Locale Format Validation
+- Suggestion List Filtering
+- Negative Test Cases (Missing Fields, Invalid Data)
+
+## Browser Support
+
+- Chrome: Full support with headless and headed modes (recommended)
+- Firefox: Full support with headless and headed modes
+- Edge: Supported via EdgeOptions (headless available)
+- Safari: Supported on macOS (no headless for SafariDriver)
+
+Notes:
+- WebDriver binaries are managed automatically by WebDriverManager
+- SafariDriver does not require WebDriverManager and works only on macOS with Safari's 'Allow Remote Automation' enabled
 
 ## Documentation
 
-### Requirement Analysis
-See `docs/1-requirement-analysis.md` for detailed functional requirements breakdown.
-
-### Test Scenarios
-See `docs/2-test-scenarios.md` for top 10 test scenarios ranked by risk level (Critical → Low).
-
-### Defect Identification
-See `docs/3-defect-identification.md` for API response discrepancies against FR-05.
-
-### Detailed Test Cases
-See `docs/4-test-cases.md` for 8+ detailed test cases with:
-- Test Case IDs
-- Titles
-- Preconditions
-- Test Steps (numbered)
-- Expected Results
-- Test Data
-
-### AI Reflection
-See `docs/6-ai-reflection.md` for documentation of AI usage and modifications made.
-
-## Design Patterns & Best Practices
-
-### Page Object Model (POM)
-- Encapsulates UI elements and interactions
-- Improves maintainability and reusability
-- Clear separation between test logic and page interactions
-
-### Test Data Builder
-- Creates complex test data objects
-- Improves readability of test scenarios
-- Enables flexible test case configuration
-
-### Custom Assertions
-- Provides clear, business-readable assertions
-- Centralizes assertion logic for consistency
-- Improves test failure diagnostics
-
-### WebDriverManager
-- Automatic ChromeDriver management
-- No manual driver setup required
-- Cross-platform compatibility
-
-## Dependencies
-
-Key libraries used:
-- **Selenium WebDriver 4.x** - UI automation framework
-- **RestAssured 4.x** - REST API testing
-- **TestNG 7.x** - Test execution framework
-- **WebDriverManager 5.x** - WebDriver binary management
-- **JUnit 5.x** - Assertions
-- **Lombok 1.x** - Boilerplate reduction
-- **Jackson 2.x** - JSON processing
-- **SLF4J** - Logging
-
-## Reporting
-
-Test reports are generated automatically:
-- HTML Report: `target/surefire-reports/`
-- TestNG Report: `target/surefire-reports/index.html`
+See `HEADLESS_MODE.md` and `BROWSER_LIFECYCLE.md` for detailed configuration, troubleshooting, and CI recommendations.
 
 ## CI/CD Integration
 
-For GitHub Actions CI/CD pipeline, add workflow file at `.github/workflows/test.yml`:
+Example GitHub Actions workflow:
 ```yaml
 name: Automated Tests
 on: [push, pull_request]
@@ -197,26 +156,16 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
         with:
-          java-version: 11
-      - run: mvn clean test
+          java-version: '22'
+      - name: Run tests
+        run: mvn clean test -Dheadless=true -Dbrowser=chrome
 ```
 
 ## Troubleshooting
 
-### WebDriver Issues
-- Ensure Chrome browser is installed
-- Clear browser cache: `~/.wdm/` directory
-- Update ChromeDriver manually if needed
-
-### Connection Issues
-- Verify API endpoint is accessible
-- Check network proxy settings
-- Validate SSL certificates for HTTPS connections
-
-### Test Failures
-- Check logs in `target/surefire-reports/`
-- Review screenshots in `target/screenshots/` (if enabled)
-- Validate test data configuration
+- Ensure the browser you choose is installed and compatible with the driver downloaded by WebDriverManager
+- For Safari: enable `Allow Remote Automation` in Safari Develop menu
+- If tests fail in headless mode but pass in headed mode, add explicit waits where needed
 
 ## Contributing Guidelines
 
@@ -232,6 +181,7 @@ For questions or issues, please contact the SDET team at sdet@apple.com
 
 ---
 
-**Last Updated**: June 2024
-**Version**: 1.0.0
+**Last Updated**: June 22, 2026
+**Version**: 1.1.0
 **Status**: Production Ready
+
