@@ -47,7 +47,7 @@ This repository contains a comprehensive test automation suite for the Autocompl
 ## Setup Instructions
 
 ### Prerequisites
-- Java 11 or higher
+- Java 22.0.1 or compatible version
 - Maven 3.6+
 - Chrome browser (latest version)
 - ChromeDriver (automatically managed by WebDriverManager)
