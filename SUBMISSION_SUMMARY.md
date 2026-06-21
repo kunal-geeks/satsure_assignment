@@ -309,5 +309,5 @@ This SDET assignment demonstrates:
 
 ---
 
-*Submitted by: Lead SDET at Apple*  
+*Submitted by: Kunal Sharma, QA Engineer at Squareboat*  
 *Date: June 21, 2026*
