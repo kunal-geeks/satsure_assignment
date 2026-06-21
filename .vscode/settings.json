@@ -1,0 +1,22 @@
+{
+  "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/jdk-22.0.1.jdk/Contents/Home",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-22",
+      "path": "/Library/Java/JavaVirtualMachines/jdk-22.0.1.jdk/Contents/Home",
+      "default": true
+    }
+  ],
+  "java.compile.nullAnalysis.mode": "automatic",
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    }
+  },
+  "maven.executable.path": "mvn",
+  "maven.terminal.useJavaHome": true,
+  "java.configuration.updateBuildConfiguration": "interactive"
+}
