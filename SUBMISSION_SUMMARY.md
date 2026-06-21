@@ -2,7 +2,7 @@
 
 **Status**: ✅ **COMPLETE**  
 **Date**: June 21, 2026  
-**Role**: Lead SDET at Apple  
+**Role**: QA Engineer @ Squareboat  
 **Framework**: Java Selenium with TestNG  
 
 ---
