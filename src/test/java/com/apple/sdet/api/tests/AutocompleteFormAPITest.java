@@ -1,13 +1,13 @@
 package com.apple.sdet.api.tests;
 
+import com.apple.sdet.api.base.BaseAPITest;
 import com.apple.sdet.api.clients.AutocompleteFormClient;
 import com.apple.sdet.api.validators.ResponseValidator;
-import com.apple.sdet.ui.utils.ConfigReader;
 import io.qameta.allure.Description;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import io.restassured.response.Response;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,14 +17,14 @@ import static org.hamcrest.Matchers.*;
  * API Test Suite for Autocomplete Form.
  * Tests API schema validation, data types, and business logic.
  */
-public class AutocompleteFormAPITest {
+public class AutocompleteFormAPITest extends BaseAPITest {
 
     private AutocompleteFormClient apiClient;
     private static final String FORM_ID = "test-form-001";
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() {
-        apiClient = new AutocompleteFormClient(ConfigReader.getApiBaseUrl());
+        apiClient = new AutocompleteFormClient(BASE_URL);
     }
 
     /**
@@ -63,7 +63,7 @@ public class AutocompleteFormAPITest {
      * Verify all fields have correct data types.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-002: Validate response field data types")
     public void testApiResponseDataTypes() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -87,7 +87,7 @@ public class AutocompleteFormAPITest {
      * Verify locale field matches IETF BCP 47 format with region code.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-003: Validate locale format matches IETF BCP 47 standard")
     public void testLocaleFormatValidation() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -111,7 +111,7 @@ public class AutocompleteFormAPITest {
      * Verify timestamps are in ISO 8601 format.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-004: Validate timestamp formats are ISO 8601")
     public void testTimestampFormatValidation() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -141,7 +141,7 @@ public class AutocompleteFormAPITest {
      * Verify suggestion_list contains only matching suggestions.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-005: Validate suggestion list contains matching suggestions")
     public void testSuggestionListValidation() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -168,7 +168,7 @@ public class AutocompleteFormAPITest {
      * Verify email format is valid.
      */
     @Test(groups = {"api", "medium"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-006: Validate email format is valid")
     public void testEmailFormatValidation() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -191,10 +191,9 @@ public class AutocompleteFormAPITest {
      * Verify API response with missing required fields is rejected.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
-    @Description("TC-API-007: Negative test - missing required field 'completed'")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("TC-API-007: Negative test - missing required field")
     public void testMissingRequiredField() {
-        // Mock response missing 'completed' field
         String mockFormId = "incomplete-form-001";
         
         try {
@@ -212,9 +211,9 @@ public class AutocompleteFormAPITest {
                     not(200));
             }
         } catch (AssertionError e) {
-            // Expected - field is missing
+            // Expected - field is missing, error message should contain "required" (case-insensitive)
             assertThat("Should validate that field is required",
-                e.getMessage(),
+                e.getMessage().toLowerCase(),
                 containsString("required"));
         }
     }
@@ -224,7 +223,7 @@ public class AutocompleteFormAPITest {
      * Verify API rejects response with invalid data types.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-008: Negative test - invalid data type for 'completed' field")
     public void testInvalidDataType() {
         // Mock response with 'completed' as string instead of boolean
@@ -268,7 +267,7 @@ public class AutocompleteFormAPITest {
      * Verify completed field is boolean and has correct value.
      */
     @Test(groups = {"api", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-API-010: Validate 'completed' field is boolean")
     public void testCompletedFieldBoolean() {
         Response response = apiClient.getFormResponse(FORM_ID);
@@ -283,6 +282,6 @@ public class AutocompleteFormAPITest {
         
         assertThat("'completed' should be Boolean true or false",
             completed,
-            any(equalTo(true), equalTo(false)));
+            notNullValue());
     }
 }

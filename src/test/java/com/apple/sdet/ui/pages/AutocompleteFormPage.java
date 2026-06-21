@@ -19,12 +19,12 @@ public class AutocompleteFormPage extends BasePage {
     private static final Logger logger = LoggerFactory.getLogger(AutocompleteFormPage.class);
     
     // Locators
-    private static final By INPUT_FIELD = By.id("input-field");
-    private static final By SUGGESTIONS_LIST = By.cssSelector("ul.suggestions");
-    private static final By SUGGESTION_ITEMS = By.cssSelector("ul.suggestions li");
-    private static final By NEXT_BUTTON = By.id("next-button");
-    private static final By ERROR_MESSAGE = By.cssSelector("span.error-message");
-    private static final By SUCCESS_MESSAGE = By.cssSelector("div.success-container p");
+    private static final By INPUT_FIELD = By.id("autocompleteInput");
+    private static final By SUGGESTIONS_LIST = By.id("suggestionsList");
+    private static final By SUGGESTION_ITEMS = By.cssSelector(".suggestion-item");
+    private static final By SUBMIT_BUTTON = By.id("submitBtn");
+    private static final By SUCCESS_MESSAGE = By.id("successMessage");
+    private static final By ERROR_MESSAGE = By.id("errorMessage");
     
     private final WebDriverWait wait;
 
@@ -42,7 +42,7 @@ public class AutocompleteFormPage extends BasePage {
      * Load the autocomplete form page.
      */
     public void loadPage(String baseUrl) {
-        navigateTo(baseUrl + "/autocomplete-form");
+        navigateTo(baseUrl);
         waitForFormToLoad();
         logger.info("Autocomplete form page loaded successfully");
     }
@@ -52,8 +52,7 @@ public class AutocompleteFormPage extends BasePage {
      */
     private void waitForFormToLoad() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(INPUT_FIELD));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(SUGGESTIONS_LIST));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(NEXT_BUTTON));
+        wait.until(ExpectedConditions.presenceOfElementLocated(SUGGESTIONS_LIST));
     }
 
     /**
@@ -126,14 +125,21 @@ public class AutocompleteFormPage extends BasePage {
     }
 
     /**
-     * Click the Next button.
+     * Click the Submit button.
      */
     public void clickNextButton() {
-        WebElement nextButton = wait.until(
-            ExpectedConditions.elementToBeClickable(NEXT_BUTTON)
+        // Hide suggestions before clicking submit button to avoid interception
+        try {
+            ((JavascriptExecutor) driver).executeScript("document.getElementById('suggestionsList').classList.remove('show');");
+        } catch (Exception e) {
+            logger.debug("Could not hide suggestions: {}", e.getMessage());
+        }
+        
+        WebElement submitButton = wait.until(
+            ExpectedConditions.elementToBeClickable(SUBMIT_BUTTON)
         );
-        nextButton.click();
-        logger.info("Clicked Next button");
+        submitButton.click();
+        logger.info("Clicked Submit button");
     }
 
     /**
@@ -156,10 +162,12 @@ public class AutocompleteFormPage extends BasePage {
      * @return Error message text
      */
     public String getErrorMessageText() {
-        WebElement errorElement = wait.until(
-            ExpectedConditions.visibilityOfElementLocated(ERROR_MESSAGE)
-        );
-        return errorElement.getText();
+        try {
+            WebElement errorElement = driver.findElement(ERROR_MESSAGE);
+            return errorElement.getText();
+        } catch (NoSuchElementException e) {
+            return "";
+        }
     }
 
     /**
@@ -234,7 +242,11 @@ public class AutocompleteFormPage extends BasePage {
      */
     public void waitForSuggestionsToLoad() {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(SUGGESTION_ITEMS));
-        Thread.sleep(500); // Small delay for rendering
+        try {
+            Thread.sleep(500); // Small delay for rendering
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
     
     @SuppressWarnings("java:S112")

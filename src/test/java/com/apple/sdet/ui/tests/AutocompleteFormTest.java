@@ -1,7 +1,7 @@
 package com.apple.sdet.ui.tests;
 
+import com.apple.sdet.ui.base.BaseUITest;
 import com.apple.sdet.ui.pages.AutocompleteFormPage;
-import com.apple.sdet.ui.utils.ConfigReader;
 import com.apple.sdet.ui.utils.DriverManager;
 import io.qameta.allure.Description;
 import io.qameta.allure.Severity;
@@ -17,18 +17,18 @@ import static org.hamcrest.Matchers.*;
  * Covers all major UI and keyboard interaction scenarios.
  */
 @Listeners
-public class AutocompleteFormTest {
+public class AutocompleteFormTest extends BaseUITest {
 
     private WebDriver driver;
     private AutocompleteFormPage formPage;
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() {
         driver = DriverManager.initializeDriver();
         formPage = new AutocompleteFormPage(driver);
     }
 
-    @AfterClass
+    @AfterMethod
     public void tearDown() {
         DriverManager.quitDriver();
     }
@@ -41,7 +41,7 @@ public class AutocompleteFormTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-001: Test prefix match filtering with suggestion list")
     public void testPrefixMatchFiltering() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
         // Step 1: Get initial suggestions
         formPage.waitForSuggestionsToLoad();
@@ -81,7 +81,7 @@ public class AutocompleteFormTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-002: Test invalid submission with empty input")
     public void testInvalidSubmissionWithEmptyInput() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
         
         // Verify input is empty
         assertThat("Input field should be empty", 
@@ -109,9 +109,12 @@ public class AutocompleteFormTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-003: Test suggestion selection by clicking")
     public void testSuggestionSelectionByClick() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
         
-        // Select first suggestion
+        // Type to filter suggestions
+        formPage.typeInInputField("agile");
+        
+        // Select suggestion
         String selectedSuggestion = "agile methodology";
         formPage.clickSuggestion(selectedSuggestion);
 
@@ -138,22 +141,22 @@ public class AutocompleteFormTest {
      * User navigates through form elements using Tab key.
      */
     @Test(groups = {"ui", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-004: Test keyboard navigation with Tab key")
     public void testTabKeyNavigation() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
         // Tab to first element (input field)
         formPage.navigateWithTabKey(1);
         org.openqa.selenium.WebElement focusedElement = formPage.getFocusedElement();
         assertThat("Focus should be on input field", 
             focusedElement.getAttribute("id"), 
-            equalTo("input-field"));
+            equalTo("autocompleteInput"));
 
         // Tab to next element (should focus on button or skip to button)
         formPage.navigateWithTabKey(1);
         focusedElement = formPage.getFocusedElement();
-        assertThat("Focus should be on next-button after tab", 
+        assertThat("Focus should be on submit button after tab", 
             focusedElement.getAttribute("id"), 
             is(notNullValue()));
     }
@@ -163,11 +166,14 @@ public class AutocompleteFormTest {
      * User submits form by pressing Enter key.
      */
     @Test(groups = {"ui", "medium"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-005: Test form submission using Enter key")
     public void testKeyboardSubmissionWithEnter() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
+        // Type to filter suggestions
+        formPage.typeInInputField("agile");
+        
         // Select suggestion
         String selectedSuggestion = "agile methodology";
         formPage.clickSuggestion(selectedSuggestion);
@@ -191,10 +197,10 @@ public class AutocompleteFormTest {
      * Verify all default suggestions are initially displayed.
      */
     @Test(groups = {"ui", "medium"})
-    @Severity(SeverityLevel.MEDIUM)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-006: Test initial suggestions display")
     public void testInitialSuggestionsDisplay() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
         java.util.List<String> suggestions = formPage.getVisibleSuggestions();
         
@@ -216,10 +222,10 @@ public class AutocompleteFormTest {
      * When typed text doesn't match any suggestion prefix, suggestions disappear.
      */
     @Test(groups = {"ui", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-007: Test suggestion filtering with no match")
     public void testSuggestionFilteringNoMatch() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
         // Type text that doesn't match any suggestion
         formPage.typeInInputField("xyz");
@@ -237,11 +243,14 @@ public class AutocompleteFormTest {
      * Verify success message is displayed after valid submission.
      */
     @Test(groups = {"ui", "high"})
-    @Severity(SeverityLevel.HIGH)
+    @Severity(SeverityLevel.CRITICAL)
     @Description("TC-UI-008: Test success message display")
     public void testSuccessMessageDisplay() {
-        formPage.loadPage(ConfigReader.getBaseUrl());
+        formPage.loadPage(TEST_PAGE_URL);
 
+        // Type to filter suggestions
+        formPage.typeInInputField("agile");
+        
         // Select and submit
         formPage.clickSuggestion("agile methodology");
         formPage.clickNextButton();

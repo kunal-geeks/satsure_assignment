@@ -206,7 +206,10 @@ public class ResponseValidator {
     public static void validateNoExtraFields(Response response) {
         logger.info("Validating no extra fields in response");
         
-        List<String> actualFields = response.jsonPath().getMap("").keySet().stream().toList();
+        @SuppressWarnings("unchecked")
+        List<String> actualFields = response.jsonPath().getMap("").keySet().stream()
+            .map(Object::toString)
+            .toList();
         String[] expectedFields = {
             "account_id",
             "account_email",

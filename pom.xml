@@ -20,8 +20,8 @@
 
         <!-- Dependency Versions -->
         <selenium.version>4.15.0</selenium.version>
-        <testng.version>7.8.1</testng.version>
-        <restassured.version>4.6.0</restassured.version>
+        <testng.version>7.11.0</testng.version>
+        <restassured.version>5.5.6</restassured.version>
         <webdrivermanager.version>5.6.2</webdrivermanager.version>
         <lombok.version>1.18.30</lombok.version>
         <jackson.version>2.15.2</jackson.version>
@@ -117,6 +117,22 @@
             <artifactId>allure-testng</artifactId>
             <version>2.21.0</version>
         </dependency>
+
+        <!-- WireMock for API mocking -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+            <version>2.35.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito for mocking -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -137,6 +153,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-testng</artifactId>
+                        <version>3.0.0</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
